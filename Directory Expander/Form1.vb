@@ -1,6 +1,7 @@
 Imports System.IO.Directory
 Imports System.IO.File
 Imports System.Text.RegularExpressions
+Imports System.Threading
 
 Public Class SelectorForm
 
@@ -18,7 +19,7 @@ Public Class SelectorForm
         Return zstr
     End Function
 
-    ' Expands the dirs (done in seperate thread!
+    ' Expands the dirs (done in seperate thread!)
     Private Sub expandDirs(ByVal worker As System.ComponentModel.BackgroundWorker, _
                 ByVal e As System.ComponentModel.DoWorkEventArgs, _
                 ByVal sourceDir As String, _
@@ -43,9 +44,16 @@ Public Class SelectorForm
             counter += 1
         Next
 
-        ' Make new directories and files
-        For i As Integer = minRange To maxrange
+        ' ONLY make new directories and files
+        For i As Integer = minRange To maxRange
+            worker.ReportProgress((i / maxRange) * 100)
+
+            If worker.CancellationPending Then
+                Return
+            End If
+
             ' Find the amount of zeroes to prepend to the folder
+            ' TODO: DRY, there's a recursive method for this
             Select Case i
                 ' Am I an idiot? Why not zeroString = "0" ?
                 ' This would be best done recursively
@@ -59,16 +67,24 @@ Public Class SelectorForm
                     zeroString = getZeroString(4)
             End Select
 
-            ' Creates new directories
+            ' Skip overwriting existing directories
+            If FileIO.FileSystem.DirectoryExists(regExp.Replace(sourceDir, zeroString & i.ToString)) Then
+                Continue For
+            End If
+
+            ' Simulating wait
+            Thread.Sleep(1000)
+
+            ' Only creates new directories
+            ' TODO: This NEEDS to be recursive
             For j As Integer = 0 To dirs.Length - 1
                 CreateDirectory(regExp.Replace(dirs(j), zeroString & i.ToString))
                 For Each d As String In files(j)
                     Copy(d, regExp.Replace(d, zeroString & i.ToString))
                 Next
             Next j
-
-            worker.ReportProgress((i / maxrange) * 100)
         Next i
+
     End Sub
 
     Private Sub expandButton_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles expandButton.Click
@@ -82,10 +98,7 @@ Public Class SelectorForm
             args(1) = max
             args(2) = directoryField.Text
 
-            ' Toggle controls
-            expandButton.Enabled = False
-            browseButton.Enabled = False
-            cancelButton.Enabled = True
+            toggleControls()
 
             bthread.RunWorkerAsync(args)
         Else
@@ -110,14 +123,18 @@ Public Class SelectorForm
 
     Private Sub cancelButton_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cancelButton.Click
         bthread.CancelAsync()
-
-        ' Toggle controls
-        expandButton.Enabled = True
-        browseButton.Enabled = True
-        cancelButton.Enabled = False
     End Sub
 
     Private Sub bthread_RunWorkerCompleted(ByVal sender As Object, ByVal e As System.ComponentModel.RunWorkerCompletedEventArgs) Handles bthread.RunWorkerCompleted
         MessageBox.Show("Job finished!", "Done!", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        toggleControls()
     End Sub
+
+    Private Sub toggleControls()
+        ' Toggle controls
+        expandButton.Enabled = Not expandButton.Enabled
+        browseButton.Enabled = Not browseButton.Enabled
+        cancelButton.Enabled = Not cancelButton.Enabled
+    End Sub
+
 End Class

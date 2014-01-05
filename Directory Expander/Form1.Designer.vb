@@ -20,18 +20,18 @@ Partial Class SelectorForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(SelectorForm))
-        Me.expandButton = New System.Windows.Forms.Button
-        Me.folderSelector = New System.Windows.Forms.FolderBrowserDialog
-        Me.directoryField = New System.Windows.Forms.TextBox
-        Me.browseButton = New System.Windows.Forms.Button
-        Me.Label1 = New System.Windows.Forms.Label
-        Me.progressBar = New System.Windows.Forms.ProgressBar
-        Me.Label3 = New System.Windows.Forms.Label
-        Me.Label4 = New System.Windows.Forms.Label
-        Me.maxRangeField = New System.Windows.Forms.TextBox
-        Me.minRangeField = New System.Windows.Forms.TextBox
-        Me.bthread = New System.ComponentModel.BackgroundWorker
-        Me.cancelButton = New System.Windows.Forms.Button
+        Me.expandButton = New System.Windows.Forms.Button()
+        Me.folderSelector = New System.Windows.Forms.FolderBrowserDialog()
+        Me.directoryField = New System.Windows.Forms.TextBox()
+        Me.browseButton = New System.Windows.Forms.Button()
+        Me.Label1 = New System.Windows.Forms.Label()
+        Me.progressBar = New System.Windows.Forms.ProgressBar()
+        Me.Label3 = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.maxRangeField = New System.Windows.Forms.TextBox()
+        Me.minRangeField = New System.Windows.Forms.TextBox()
+        Me.bthread = New System.ComponentModel.BackgroundWorker()
+        Me.cancelButton = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'expandButton
@@ -106,6 +106,7 @@ Partial Class SelectorForm
         Me.maxRangeField.Name = "maxRangeField"
         Me.maxRangeField.Size = New System.Drawing.Size(32, 20)
         Me.maxRangeField.TabIndex = 6
+        Me.maxRangeField.Text = "15"
         '
         'minRangeField
         '
@@ -113,6 +114,7 @@ Partial Class SelectorForm
         Me.minRangeField.Name = "minRangeField"
         Me.minRangeField.Size = New System.Drawing.Size(32, 20)
         Me.minRangeField.TabIndex = 4
+        Me.minRangeField.Text = "1"
         '
         'bthread
         '
